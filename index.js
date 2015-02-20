@@ -2,5 +2,5 @@
 'use strict';
 
 module.exports = {
-  name: 'eureka-widget-collection-list'
+  name: 'eureka-widget-collection-display'
 };

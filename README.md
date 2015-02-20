@@ -1,6 +1,26 @@
-# Eureka-widget-collection-list
+# Eureka-widget-collection-display
 
-This README outlines the details of collaborating on this Ember addon.
+An Eureka widget to display a collection. Usage:
+
+    {
+        BlogPost: {
+            views: {
+                collection: {
+                    index: {
+                        widgets: [
+                            {
+                                type: "collection-display",
+                                // customise the header. If `header` is `auto`
+                                // then display the pod type
+                                header: "All the blog posts"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+
 
 ## Installation
 

@@ -1,7 +1,7 @@
 {
-  "name": "eureka-widget-collection-list",
+  "name": "eureka-widget-collection-display",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "An Eureka widget to display a collection",
   "directories": {
     "doc": "doc",
     "test": "tests"
