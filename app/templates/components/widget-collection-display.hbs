@@ -1,11 +1,29 @@
 <div class="panel panel-default">
-    {{#if header}}
-        <div class="panel-heading">{{{header}}}</div>
+    {{#if label}}
+        <div class="panel-heading">{{{label}}}</div>
     {{/if}}
 
     {{#if results.isPending}}
         loading...
     {{else}}
+
+        {{#if filterEnabled}}
+            <div class="panel-body">
+
+                <div class="input-group">
+                    {{input type="text" value=filterTerm class="form-control"}}
+                    {{#if filterTerm}}
+                        <span class="input-group-btn">
+                            <button {{action 'clear'}} class="btn btn-default" type="button">
+                                <i class="glyphicon glyphicon-remove"></i></button>
+                        </span>
+                    {{else}}
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                    {{/if}}
+                </div>
+            </div>
+        {{/if}}
+
         <div class="list-group">
             {{#each item in collection}}
                 {{#link-to item.meta.modelIndexViewPath item._id class="list-group-item"}}

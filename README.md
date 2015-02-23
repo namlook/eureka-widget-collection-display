@@ -7,12 +7,22 @@ An Eureka widget to display a collection. Usage:
             views: {
                 collection: {
                     index: {
+                        // if you want to persiste the filter on the url,
+                        // set the queryParams here
+                        queryParams: ['search'],
                         widgets: [
                             {
                                 type: "collection-display",
-                                // customise the header. If `header` is `auto`
+
+                                // Customise the label. If `label` is `auto`
                                 // then display the pod type
-                                header: "All the blog posts"
+                                label: "All the blog posts"
+
+                                // if `filter` exists , an input will be displayed
+                                // to filter the collection
+                                filter: {
+                                    queryParam: 'search' // should be in the view's queryParams
+                                }
                             }
                         ]
                     }
