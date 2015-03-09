@@ -3,13 +3,12 @@
         <div class="panel-heading">{{{label}}}</div>
     {{/if}}
 
-    {{#if results.isPending}}
+    {{#if collection.isPending}}
         loading...
     {{else}}
 
         {{#if filterEnabled}}
             <div class="panel-body">
-
                 <div class="input-group">
                     {{input type="text" value=filterTerm class="form-control"}}
                     {{#if filterTerm}}
