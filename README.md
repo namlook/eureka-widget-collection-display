@@ -22,7 +22,10 @@ An Eureka widget to display a collection. Usage:
                                 // to filter the collection
                                 filter: {
                                     queryParam: 'search' // should be in the view's queryParams
-                                }
+                                },
+
+                                // what to display if the collection is empty
+                                emptyPlaceholder: 'nothing to display here'
                             }
                         ]
                     }

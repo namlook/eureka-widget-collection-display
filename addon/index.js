@@ -16,9 +16,10 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
     /** Make the filterTerm a queryParam if configured in `config` */
     filterTerm: Ember.computed.alias('queryParam'),
 
-
     /** if true, display the input filter */
     filterEnabled: Ember.computed.bool('config.filter'),
+
+    emptyPlaceholder: Ember.computed.alias('config.emptyPlaceholder'),
 
 
     /** update the `routeModel.query` from `filterTerm` */
