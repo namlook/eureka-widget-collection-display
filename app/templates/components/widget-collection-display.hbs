@@ -4,7 +4,7 @@
     {{/if}}
 
     {{#if collection.isPending}}
-        loading...
+        {{partial 'eureka-loading'}}
     {{else}}
         {{#if filterEnabled}}
             <div class="panel-body">
