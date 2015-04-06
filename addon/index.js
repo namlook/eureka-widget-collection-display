@@ -11,8 +11,6 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
      */
     'config.queryParam': Ember.computed.alias('config.filter.queryParam'),
 
-    modelRoute: Ember.computed.alias('modelRoute'),
-
     /** Make the filterTerm a queryParam if configured in `config` */
     filterTerm: Ember.computed.alias('queryParam'),
 
