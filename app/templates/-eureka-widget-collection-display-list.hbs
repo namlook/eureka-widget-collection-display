@@ -1,0 +1,5 @@
+{{#each item in collection}}
+    {{#link-to item.meta.modelIndexViewPath item._id class="list-group-item"}}
+        <h4 class="list-group-item-heading">{{item.title}}</h4>
+    {{/link-to}}
+{{/each}}
