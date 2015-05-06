@@ -6,18 +6,40 @@
     {{#if collection.isPending}}
         {{partial 'eureka-loading'}}
     {{else}}
-        {{#if filterEnabled}}
+
+        {{#if showOptionsControl}}
             <div class="panel-body">
-                <div class="input-group">
-                    {{input type="text" value=filterTerm class="form-control"}}
-                    {{#if filterTerm}}
-                        <span class="input-group-btn">
-                            <button {{action 'clear'}} class="btn btn-default" type="button">
-                                <i class="glyphicon glyphicon-remove"></i></button>
-                        </span>
-                    {{else}}
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
-                    {{/if}}
+                <div class="form-inline">
+                {{#if filterEnabled}}
+                    <div class="input-group">
+                        {{input type="text" value=filterTerm class="form-control"}}
+                        {{#if filterTerm}}
+                            <span class="input-group-btn">
+                                <button {{action 'clear'}} class="btn btn-default" type="button">
+                                    <i class="glyphicon glyphicon-remove"></i></button>
+                            </span>
+                        {{else}}
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                        {{/if}}
+                    </div>
+                {{/if}}
+
+                {{#if sortingProperties}}
+                    <div class="pull-right">
+                        <div class="input-group">
+                            <div class="input-group-addon">sort by</div>
+                            {{property-autosuggest modelMeta=routeModel.meta propertyNames=sortingProperties value=sortBy}}
+                        </div>
+
+                        <button class="btn btn-default" {{action 'toggleOrder'}}>
+                            {{#if ascendingOrder}}
+                                <i class="glyphicon glyphicon-sort-by-alphabet"></i>
+                            {{else}}
+                                <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
+                            {{/if}}
+                        </button>
+                    </div>
+                {{/if}}
                 </div>
             </div>
         {{/if}}
@@ -31,5 +53,6 @@
                 {{/if}}
             {{/if}}
         </div>
+
     {{/if}}
 </div>

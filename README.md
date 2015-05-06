@@ -24,6 +24,22 @@ An Eureka widget to display a collection. Usage:
                                     queryParam: 'search' // should be in the view's queryParams
                                 },
 
+                                sort: {
+                                    // the property name to sort the results
+                                    by: 'title',
+
+                                    // if true, the results, will be sorted by ascending order
+                                    ascendingOrder: true,
+
+                                    // if allowedProperties is not null, the user can sort the
+                                    // results by itself by the property he wants.
+                                    // If `allowedProperties` is '*', the results can be sorted
+                                    // by all properties. You can restrict the properties by
+                                    // specifing a property names list
+                                    allowedProperties: '*'
+                                },
+
+
                                 // what to display if the collection is empty
                                 emptyPlaceholder: 'nothing to display here'
                             }
