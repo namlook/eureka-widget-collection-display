@@ -1,16 +1,23 @@
 <div class="panel panel-default">
-    {{#if label}}
-        <div class="panel-heading">{{{label}}}</div>
+
+    {{#if displayPanelHeading}}
+        <div class="panel-heading">
+            {{#if label}}
+                {{{label}}}
+            {{/if}}
+            {{#if totalResults}}
+                &nbsp;<span class="pull-right">{{totalResults}} results</span>
+            {{/if}}
+        </div>
     {{/if}}
 
     {{#if collection.isPending}}
         {{partial 'eureka-loading'}}
     {{else}}
-
         {{#if showOptionsControl}}
             <div class="panel-body">
                 <div class="form-inline">
-                {{#if filterEnabled}}
+{{!--                 {{#if filterEnabled}}
                     <div class="input-group">
                         {{input type="text" value=filterTerm class="form-control"}}
                         {{#if filterTerm}}
@@ -22,7 +29,7 @@
                             <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                         {{/if}}
                     </div>
-                {{/if}}
+                {{/if}} --}}
 
                 {{#if sortingProperties}}
                     <div class="pull-right">
@@ -53,6 +60,38 @@
                 {{/if}}
             {{/if}}
         </div>
+
+        {{#if displayPagination}}
+            <nav>
+              <ul class="pager">
+                {{#if displayPreviousButton}}
+                    <li>
+                        <a href="#" aria-label="End" {{action 'goToBeginning'}}>
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" {{action 'displayPrevious'}}>
+                            previous
+                        </a>
+                    </li>
+                {{/if}}
+
+                {{#if displayNextButton}}
+                    <li>
+                        <a href="#" {{action 'displayNext'}}>
+                            next
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" aria-label="End" {{action 'goToEnd'}}>
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {{/if}}
+              </ul>
+            </nav>
+        {{/if}}
 
     {{/if}}
 </div>

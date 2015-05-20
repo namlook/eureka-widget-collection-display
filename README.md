@@ -24,6 +24,8 @@ An Eureka widget to display a collection. Usage:
                                     queryParam: 'search' // should be in the view's queryParams
                                 },
 
+                                limit: 20,
+
                                 sort: {
                                     // the property name to sort the results
                                     by: 'title',

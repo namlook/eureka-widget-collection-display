@@ -13,10 +13,10 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
     /** Make the filterTerm a queryParam if configured in `config` */
     // filterTerm: Ember.computed.alias('queryParam'),
-    filterTerm: null,
+    // filterTerm: null,
 
     /** if true, display the input filter */
-    filterEnabled: Ember.computed.bool('config.filter'),
+    // filterEnabled: Ember.computed.bool('config.filter'),
 
     emptyPlaceholder: Ember.computed.alias('config.emptyPlaceholder'),
 
@@ -35,7 +35,16 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
         return allowedProperties;
     }),
 
-    showOptionsControl: Ember.computed.or('sortingEnabled', 'filterEnabled'),
+    offset: 0,
+    limit: Ember.computed('config.limit', function() {
+        return this.getWithDefault('config.limit', 20);
+    }),
+
+    totalResults: null,
+
+    displayPanelHeading: Ember.computed.or('totalResults', 'label'),
+
+    showOptionsControl: Ember.computed.or('sortingEnabled'),//, 'filterEnabled'),
 
     _updateCollection: 0,
 
@@ -47,13 +56,13 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
         Ember.setProperties(query, queryConfig);
 
-        var filterTerm = this.get('filterTerm');
-        if (filterTerm) {
-            query['title[$iregex]'] = '^'+filterTerm;
-        } else if (!query['title[$iregex]']) {
-            query['title[$iregex]'] = undefined;
-            filterTerm = null;
-        }
+        // var filterTerm = this.get('filterTerm');
+        // if (filterTerm) {
+        //     query['title[$iregex]'] = '^'+filterTerm;
+        // } else if (!query['title[$iregex]']) {
+        //     query['title[$iregex]'] = undefined;
+        //     filterTerm = null;
+        // }
 
         var sortBy = this.get('sortBy');
         if (sortBy) {
@@ -63,7 +72,26 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
             query['_sortBy'] = sortBy
         }
 
+        var limit = this.get('limit');
+        var offset = this.get('offset');
+        query._limit = limit;
+        query._offset = offset;
+
         return query;
+    },
+
+
+    queryObserver: Ember.observer('routeModel.query.hasChanged', function() {
+        this.set('offset', 0);
+        this.updateCollection();
+    }),
+
+    paginationObserver: Ember.observer('offset', 'limit', function() {
+        this.updateCollection();
+    }),
+
+    updateCollection: function() {
+        this.incrementProperty('_updateCollection');
     },
 
 
@@ -88,9 +116,14 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
 
     /** update the collection from the `routeModel.query` */
-    collection: Ember.computed('routeModel.query.hasChanged', '_updateCollection', 'queryConfig', 'store', function() {
+    collection: Ember.computed('_updateCollection', 'queryConfig', 'store', function() {
         var query = this.getQuery();
-        return this.get('store').find(query);
+        var store = this.get('store');
+        var that = this;
+        store.count(query).then(function(data) {
+            that.set('totalResults', data.total);
+        });
+        return store.find(query);
     }),
 
 
@@ -98,25 +131,63 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
         this.incrementProperty('_updateCollection');
     }),
 
-
-    /** update the query when the user hit the enter key */
-    keyPress: function(e) {
-        if (e.keyCode === 13) {
-            this.incrementProperty('_updateCollection');
-
+    displayPreviousButton: Ember.computed('offset', 'limit', function() {
+        var offset = this.get('offset');
+        if (offset > 0) {
+            return true;
         }
-    },
+    }),
+
+    displayNextButton: Ember.computed('totalResults', 'offset', 'limit', function() {
+        var total = this.get('totalResults');
+        var offset = this.get('offset');
+        var limit = this.get('limit');
+        if (total > offset+limit) {
+            return true;
+        }
+    }),
+
+    displayPagination: Ember.computed.or('displayPreviousButton', 'displayNextButton'),
+
+
+    // /** update the query when the user hit the enter key */
+    // keyPress: function(e) {
+    //     if (e.keyCode === 13) {
+    //         this.incrementProperty('_updateCollection');
+
+    //     }
+    // },
 
 
     actions: {
-        clear: function() {
-            this.set('filterTerm', null);
-            this.incrementProperty('_updateCollection');
+        // clear: function() {
+        //     this.set('filterTerm', null);
+        //     this.incrementProperty('_updateCollection');
 
-        },
+        // },
         toggleOrder: function() {
             this.toggleProperty('ascendingOrder');
         },
+        goToBeginning: function() {
+            this.set('offset', 0);
+        },
+        goToEnd: function() {
+            var totalResults = this.get('totalResults');
+            var limit = this.get('limit');
+            this.set('offset', totalResults-limit);
+        },
+        displayPrevious: function() {
+            var offset = this.get('offset');
+            if (offset > 0) {
+                var limit = this.get('limit');
+                this.set('offset', offset - limit);
+            }
+        },
+        displayNext: function() {
+            var offset = this.get('offset');
+            var limit = this.get('limit');
+            this.set('offset', offset+limit);
+        }
     }
 
 
