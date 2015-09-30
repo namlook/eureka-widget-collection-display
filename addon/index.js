@@ -21,7 +21,10 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
     emptyPlaceholder: Ember.computed.alias('config.emptyPlaceholder'),
 
     sortingEnabled: Ember.computed.bool('sortingProperties'),
-    sortBy: Ember.computed.alias('config.sort.by'),
+    sortBy: Ember.computed('config.sort.by', function() {
+        return this.getWithDefault('config.sort.by', 'title');
+    }),
+
     ascendingOrder: Ember.computed('config.sort.ascendingOrder', function() {
         return !!this.get('config.sort.ascendingOrder') || true;
     }),
