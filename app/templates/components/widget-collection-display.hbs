@@ -31,22 +31,35 @@
                     </div>
                 {{/if}} --}}
 
-                {{#if sortingProperties}}
-                    <div class="pull-right">
-                        <div class="input-group">
-                            <div class="input-group-addon">sort by</div>
-                            {{property-autosuggest modelMeta=routeModel.meta propertyNames=sortingProperties value=sortBy}}
-                        </div>
+                    {{#if sortingProperties}}
+                        {{!-- <div class="pull-right"> --}}
+                            <div class="input-group">
+                                <div class="input-group-addon">sort by</div>
+                                {{property-autosuggest modelMeta=routeModel.meta propertyNames=sortingProperties value=sortBy}}
+                            </div>
 
-                        <button class="btn btn-default" {{action 'toggleOrder'}}>
-                            {{#if ascendingOrder}}
-                                <i class="glyphicon glyphicon-sort-by-alphabet"></i>
-                            {{else}}
-                                <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
-                            {{/if}}
-                        </button>
+                            <button class="btn btn-default" {{action 'toggleOrder'}}>
+                                {{#if ascendingOrder}}
+                                    <i class="glyphicon glyphicon-sort-by-alphabet"></i>
+                                {{else}}
+                                    <i class="glyphicon glyphicon-sort-by-alphabet-alt"></i>
+                                {{/if}}
+                            </button>
+                        {{!-- </div> --}}
+                    {{/if}}
+
+                    <div class="pull-right">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <i class="glyphicon glyphicon-cloud-download"></i>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="export as">
+                                <li><a href="#" {{action 'exportData' 'csv'}}>export as CSV</a></li>
+                                <li><a href="#" {{action 'exportData' 'json'}}>export as JSON</a></li>
+                            </ul>
+                        </div>
                     </div>
-                {{/if}}
                 </div>
             </div>
         {{/if}}

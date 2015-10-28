@@ -54,8 +54,8 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
     /** return the query **/
     getQuery: function() {
-        var queryConfig = this.get('queryConfig');
-        var query = this.get('routeModel.query.raw');
+        let queryConfig = this.get('queryConfig');
+        let query = this.get('routeModel.query.raw');
 
         Ember.setProperties(query, queryConfig);
 
@@ -67,20 +67,30 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
         //     filterTerm = null;
         // }
 
-        var sortBy = this.get('sortBy');
+        let sortBy = this.get('sortBy');
         if (sortBy) {
             if (!this.get('ascendingOrder')) {
                 sortBy = '-'+sortBy;
             }
-            query['_sortBy'] = sortBy
+            query['_sort'] = sortBy;
         }
 
-        var limit = this.get('limit');
-        var offset = this.get('offset');
-        query._limit = limit;
-        query._offset = offset;
+        query._limit = this.get('limit');
+        query._offset = this.get('offset');
 
-        return query;
+        let jsonApiQuery = {};
+        let filters = {};
+        Object.keys(query).forEach((key) => {
+            if (key[0] === '_') {
+                jsonApiQuery[key.slice(1)] = query[key];
+            } else {
+                filters[key] = query[key];
+            }
+        });
+
+        jsonApiQuery.filter = filters;
+
+        return jsonApiQuery;
     },
 
 
@@ -122,9 +132,8 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
     collection: Ember.computed('_updateCollection', 'queryConfig', 'store', function() {
         var query = this.getQuery();
         var store = this.get('store');
-        var that = this;
-        store.count(query).then(function(data) {
-            that.set('totalResults', data.total);
+        store.count(query).then((total) => {
+            this.set('totalResults', total);
         });
         return store.find(query);
     }),
@@ -169,6 +178,7 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
         // },
         toggleOrder: function() {
+            console.log('toggleOrder!!!', this.get('ascendingOrder'));
             this.toggleProperty('ascendingOrder');
         },
         goToBeginning: function() {
@@ -190,6 +200,41 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
             var offset = this.get('offset');
             var limit = this.get('limit');
             this.set('offset', offset+limit);
+        },
+        exportData: function(format) {
+            let query = this.getQuery();
+            var apiEndpoint = this.get('routeModel.meta.store.resourceEndpoint');
+            delete query.limit;
+            delete query.offset;
+            let queryString = '';
+            if (query.filter) {
+                for (let propertyName of Object.keys(query.filter)) {
+                    if (queryString) {
+                        queryString = `${queryString}&`;
+                    }
+                    let value = query.filter[propertyName];
+
+                    if (typeof value === 'object') {
+                        for (let operator of Object.keys(value)) {
+                            let val = encodeURIComponent(value[operator]);
+                            queryString = `${queryString}filter[${propertyName}][${operator}]=${val}`;
+                        }
+                    } else {
+                        value = encodeURIComponent(value);
+                        queryString  = `${queryString}filter[${propertyName}]=${value}`;
+                    }
+                }
+            }
+
+            if (query.sort) {
+                if (queryString) {
+                    queryString = `${queryString}&`;
+                }
+                queryString = `${queryString}sort=${query.sort}`;
+            }
+
+            var url = `${apiEndpoint}/i/stream/${format}?${queryString}`;
+            window.open(url);
         }
     }
 
