@@ -21,6 +21,8 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
     emptyPlaceholder: Ember.computed.alias('config.emptyPlaceholder'),
 
     sortingEnabled: Ember.computed.bool('sortingProperties'),
+    allowExportData: Ember.computed.bool('config.export'),
+
     sortBy: Ember.computed('config.sort.by', function() {
         return this.getWithDefault('config.sort.by', 'title');
     }),
@@ -47,7 +49,7 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
     displayPanelHeading: Ember.computed.or('totalResults', 'label'),
 
-    showOptionsControl: Ember.computed.or('sortingEnabled'),//, 'filterEnabled'),
+    showOptionsControl: Ember.computed.or('sortingEnabled', 'allowExportData'),
 
     _updateCollection: 0,
 
