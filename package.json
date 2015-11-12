@@ -1,6 +1,6 @@
 {
   "name": "eureka-widget-collection-display",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "An Eureka widget to display a collection",
   "directories": {
     "doc": "doc",
