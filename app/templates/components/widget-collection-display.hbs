@@ -1,5 +1,39 @@
 <div class="panel panel-default">
 
+    {{#if allowExportData}}
+    <div class="modal fade export-data-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Data CSV export</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted"> You are about to export the data that match your query. Just select the field you want to export and click the "export" button.</p>
+
+                    {{#ek-multiselect selection=selectedProperties placeholder="select the field(s) to export"}}
+                        {{#each modelProperties as |property|}}
+                            <option value="{{property.name}}">
+                                {{property.label}}
+                            </option>
+                        {{/each}}
+                    {{/ek-multiselect}}
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group" role="group">
+                        <button
+                            disabled="{{unless selectedProperties.length 'disabled'}}"
+                            class="btn btn-primary"
+                            {{action 'exportData' 'csv'}}>
+                                export
+                        </button>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    {{/if}}
+
     {{#if displayPanelHeading}}
         <div class="panel-heading">
             {{#if label}}
@@ -50,16 +84,13 @@
 
                     {{#if allowExportData}}
                     <div class="pull-right">
-                        <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <i class="glyphicon glyphicon-cloud-download"></i>
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="export as">
-                                <li><a href="#" {{action 'exportData' 'csv'}}>export as CSV</a></li>
-                                <li><a href="#" {{action 'exportData' 'json'}}>export as JSON</a></li>
-                            </ul>
-                        </div>
+                        <button
+                            type="button"
+                            class="btn btn-default"
+                            data-toggle="modal"
+                            data-target=".export-data-modal">
+                              <i class="glyphicon glyphicon-cloud-download"></i>
+                        </button>
                     </div>
                     {{/if}}
                 </div>

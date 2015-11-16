@@ -20,8 +20,24 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
 
     emptyPlaceholder: Ember.computed.alias('config.emptyPlaceholder'),
 
-    sortingEnabled: Ember.computed.bool('sortingProperties'),
+    /*** data export ***/
     allowExportData: Ember.computed.bool('config.export'),
+
+    modelProperties: Ember.computed('routeModel.meta.fieldNames.[]', function() {
+        let properties = [];
+        for (let name of this.get('routeModel.meta.fieldNames')) {
+            let property = this.get(`routeModel.meta.${name}Field`);
+            properties.push(property);
+        }
+        return properties;
+    }),
+
+    selectedProperties: Ember.computed(function() {
+        return Ember.A();
+    }),
+
+    /*** sorting ***/
+    sortingEnabled: Ember.computed.bool('sortingProperties'),
 
     sortBy: Ember.computed('config.sort.by', function() {
         return this.getWithDefault('config.sort.by', 'title');
@@ -40,6 +56,11 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
         return allowedProperties;
     }),
 
+    sortObserver: Ember.observer('sortBy', 'ascendingOrder', function() {
+        this.incrementProperty('_updateCollection');
+    }),
+
+    /*** divers query options ***/
     offset: 0,
     limit: Ember.computed('config.limit', function() {
         return this.getWithDefault('config.limit', 20);
@@ -141,9 +162,7 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
     }),
 
 
-    sortObserver: Ember.observer('sortBy', 'ascendingOrder', function() {
-        this.incrementProperty('_updateCollection');
-    }),
+
 
     displayPreviousButton: Ember.computed('offset', 'limit', function() {
         var offset = this.get('offset');
@@ -233,6 +252,18 @@ export default WidgetCollection.extend(QueryParametrableWidgetMixin, {
                     queryString = `${queryString}&`;
                 }
                 queryString = `${queryString}sort=${query.sort}`;
+            }
+
+            let selectedLength = this.get('selectedProperties.length');
+            if (selectedLength) {
+                let selectedFields = this.get('selectedProperties');
+                let modelPropertiesLength = this.get('modelProperties.length');
+                if (selectedLength !== modelPropertiesLength) {
+                    if (queryString) {
+                        queryString = `${queryString}&`;
+                    }
+                    queryString += `fields=${selectedFields.join(',')}`;
+                }
             }
 
             var url = `${apiEndpoint}/i/stream/${format}?${queryString}`;
